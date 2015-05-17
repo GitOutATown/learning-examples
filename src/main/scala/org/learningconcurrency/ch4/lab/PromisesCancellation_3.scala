@@ -3,7 +3,7 @@ package org.learningconcurrency.ch4.lab
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 
-object PromisesCancellation_2 extends App {
+object PromisesCancellation_3 extends App {
 
    /*
      * We are passing an anonymous function to runContext. This anonymous 
@@ -58,10 +58,14 @@ object PromisesCancellation_2 extends App {
         (cancel_P, asyncCompFut)
     }
 
-    Thread.sleep(1500)
-
+    value foreach { case v => println("value: " + v) }
+    value.failed foreach { case e => println("error: " + e) }
+    
+    // Simulated cancellation period threshhold
+    Thread.sleep(scala.util.Random.nextInt(7000))
     cancel_P trySuccess () // 'cancel' Promise becomes completed
 
-    println("computation cancelled!")
+    Thread.sleep(2500)
+    println("JVM leavin da haus")
 }
 

@@ -3,7 +3,7 @@ package org.learningconcurrency.ch4.lab
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 
-object PromisesCancellation_2 extends App {
+object PromisesCancellation_4 extends App {
 
    /*
      * We are passing an anonymous function to runContext. This anonymous 
@@ -19,11 +19,13 @@ object PromisesCancellation_2 extends App {
      * 
      * This anonymous function passed to runContext will be referred to as
      * 'body' there (because the body is in fact concrete executable code
-     * whereas the input is just a placeholder of an arg that will be passed
-     * to 'body' inside runContext. When invoked, this input to 'body', 
-     * cancel_F, will be substituted with cancel_P.future. cancel_P is a 
-     * Promise[Unit]. cancel_P.future is the context for cancellation. If it
-     * is completed by the client calling ...
+     * whereas the input is a placeholder (type) of an arg that 
+     * will be passed to 'body' inside runContext. When invoked, this input 
+     * to 'body', cancel_F, will be substituted with cancel_P.future and 
+     * referred to as cancel_F. cancel_P is a Promise[Unit]. cancel_P.future 
+     * is the context for cancellation. The async computation periodically 
+     * checks cancel_F to see if it has been completed by the client calling 
+     * tryComplete on cancel_P.
      * 
      * cancel_P and cancel_F both refer to the same Promise/Future duality.
      * The client uses the cancel_P Promise to cancel the async computation, 
@@ -58,10 +60,14 @@ object PromisesCancellation_2 extends App {
         (cancel_P, asyncCompFut)
     }
 
-    Thread.sleep(1500)
-
+    value foreach { case v => println("value: " + v) }
+    value.failed foreach { case e => println("error: " + e) }
+    
+    // Simulated cancellation period threshhold
+    Thread.sleep(scala.util.Random.nextInt(7000))
     cancel_P trySuccess () // 'cancel' Promise becomes completed
 
-    println("computation cancelled!")
+    Thread.sleep(500)
+    println("JVM leavin da haus")
 }
 
