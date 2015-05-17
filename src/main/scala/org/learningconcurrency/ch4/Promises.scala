@@ -1,6 +1,8 @@
 package org.learningconcurrency
 package ch4
 
+import scala.concurrent.Future
+
 
 
 
@@ -97,6 +99,7 @@ object PromisesAndCallbacks extends App {
 
 object PromisesAndCustomOperations extends App {
   import scala.concurrent._
+  import scala.concurrent.Future
   import ExecutionContext.Implicits.global
 
   implicit class FutureOps[T](val self: Future[T]) {
