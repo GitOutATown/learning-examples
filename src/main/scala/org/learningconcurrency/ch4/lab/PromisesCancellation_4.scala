@@ -33,12 +33,13 @@ object PromisesCancellation_4 extends App {
      * if it should throw a CancellationException.
      */
     val (cancel_P, value) = runContext { cancel_F => 
-        { ///// body that will be ansychronous computation in cancellable
+        { ///// body that will be ansychronous computation in runContext
             val result = for {
                  i <- 1 to 5
             } yield {
                  Thread.sleep(500)
                  println(s"$i: working")
+                 // Checking to see if its been cancelled. Using exception as off switch, i.e. trigger failure, since there are only two ways to complete a Future (Success or Failure).
                  if (cancel_F.isCompleted) throw new CancellationException
                  i
             }
@@ -54,6 +55,7 @@ object PromisesCancellation_4 extends App {
         val cancel_P = Promise[Unit]
         val asyncCompFut = Future {
             val returnValue = body(cancel_P.future)
+            // See the book's explanation for why this check is need to avoid race condition.
             if (!cancel_P.tryFailure(new Exception)) throw new CancellationException
             returnValue // completed type T
         }
