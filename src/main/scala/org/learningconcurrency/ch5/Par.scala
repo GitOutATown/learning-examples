@@ -198,8 +198,7 @@ object ParSideEffectsIncorrect extends App {
   import scala.collection._
 
   def intSize(a: GenSet[Int], b: GenSet[Int]): Int = {
-    var count = 0
-    for (x <- a) if (b contains x) count += 1
+    var count = a.count(x => b contains x)
     count
   }
   val seqres = intSize((0 until 1000).toSet, (0 until 1000 by 4).toSet)

@@ -27,7 +27,7 @@ object PromisesAndTimers extends App {
     timer.schedule(new TimerTask {
       def run() = {
           println("In timeout run") // implementation of public abstract void run()
-          p success () // timer tast is run function
+          p success () // timer task is run function
       }
     }, millis) // millis is duration
     p.future
