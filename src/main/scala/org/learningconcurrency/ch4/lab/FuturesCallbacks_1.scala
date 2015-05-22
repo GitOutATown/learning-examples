@@ -24,7 +24,7 @@ object FuturesCallbacks_1 extends App {
     urlSpec.onComplete {
         /* This pattern I'm using here is totally legit, but note that
          * `onSuccess` is just an alias for `foreach` to harmonize with 
-         * `onFailure`. (Both onSuccess and onFailure is scheduled to be 
+         * `onFailure`. (Both onSuccess and onFailure are scheduled to be 
          * deprecated for 2.12 because they are redundant due to `foreach` 
          * and `failed.foreach`)
          * --Victor Klang
