@@ -43,7 +43,7 @@ object PromisesCancellation_4 extends App {
                  if (cancel_F.isCompleted) throw new CancellationException
                  i
             }
-            result.toList // List[Int]
+            result.toList // List[Int] returned wrapped in Future by runContext to appear (above) as 'value'.
         } ///// end body
     }
     
@@ -54,7 +54,7 @@ object PromisesCancellation_4 extends App {
     def runContext[T](body: Future[Unit] => T): (Promise[Unit], Future[T]) = {
         val cancel_P = Promise[Unit]
         val asyncCompFut = Future {
-            val returnValue = body(cancel_P.future)
+            val returnValue = body(cancel_P.future) // body's async computation is triggered
             // See the book's explanation for why this check is need to avoid race condition.
             if (!cancel_P.tryFailure(new Exception)) throw new CancellationException
             returnValue // completed type T

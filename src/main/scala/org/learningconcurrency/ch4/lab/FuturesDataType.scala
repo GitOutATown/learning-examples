@@ -1,9 +1,12 @@
 package org.learningconcurrency.ch4.lab
 
+import scala.concurrent._
+import ExecutionContext.Implicits.global
+import scala.io.Source
+  
 object FuturesDataType extends App {
-  import scala.concurrent._
-  import ExecutionContext.Implicits.global
-  import scala.io.Source
+    
+  // Trivial, little value here
 
   val buildFile: Future[String] = Future {
     val f = Source.fromFile("build.sbt")

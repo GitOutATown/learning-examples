@@ -36,16 +36,16 @@ object PromisesAndTimers extends App {
   println("declaring fut1 (in PromisesAndTimers)")
   // Composing default timeout with def 'or'
   val fut1 = timeout(1000).map(_ => "\'self\' timeout!") or Future {
-    println("ThreadSleep999_fut1 body block/apply/construction, computation begining")
+    println("ThreadSleep_fut1 body block/apply/construction, computation begining")
     Thread.sleep(999)
-    "ThreadSleep999_fut1 work completed!"
+    "ThreadSleep_fut1 work completed!"
   }
   println("fut1 val visible: " + fut1)
 
   println("declaring fut1 foreach callback...")
   // callback
   fut1 foreach {
-    case text => println("fut1 completed with: " + text)
+    case text => println("====>>fut1 completed with: " + text)
   }
   
   println("PromisesAndTimers BOTTOM (before sleep and leavin...)")
@@ -63,19 +63,19 @@ object PromisesAndCustomOperations { //extends App {
     println("In implicit class FutureOps constructor/apply")
     // or_self is timeout Future; or_that is Thread.sleep Future
     def or(or_that: Future[T]): Future[T] = {
-      println("In FutureOps def or TOP")
-      val p = Promise[T] // new p with each call to or
-      println("In FutureOps def or p: " + p)
-      /* or_self is timeout Future. This is a definition implementation
-       * for or_that future. It registers the callback. or_that onComplete 
-       * will be invoked with tryComplete when callback occures (based 
-       * on or_that computation completion).
+      /*
+       * In the constructor of an anon Future that registers the callbacks 
+       * for or_self and or_that, either of which will invoke Promise p with 
+       * tryComplete when callback occures.
        */
+      println("In FutureOps def or TOP")
+      val p = Promise[T] // new p with each call to def or
+      println("In FutureOps def or p: " + p)
+      // or_self is timeout Future. 
       or_self onComplete { case x => {
-              println("In FutureOps def or or_self onComplete, x: " + x)
-              p tryComplete x 
-          }
-      }
+          println("In FutureOps def or or_self onComplete, x: " + x)
+          p tryComplete x 
+      }}
       // or_that is Thread.sleep Future; should win
       or_that onComplete { case y => {
           println("In FutureOps def or or_that onComplete, y: " + y)
@@ -96,7 +96,7 @@ object PromisesAndCustomOperations { //extends App {
   println("declaring fut2 foreach callback...")
   // callback
   fut2 foreach {
-    case when => println(s"The fut2 future is $when")
+    case when => println(s"====>>The fut2 future is $when")
   }
   
   println("PromisesAndCustomOperations BOTTOM...")

@@ -7,21 +7,18 @@ import java.io.File
 import scala.util.{Failure, Success, Try}
 
 object PromisesAndCallbacks extends App {
-
-  // This is screwy. Only works on code compile cause by code change!
-   
     
   def fileCreated(directory: String): Future[String] = {
-    println("~~In fileCreated, directory: " + directory)
+    //println("~~In fileCreated, directory: " + directory)
     val p = Promise[String]
 
     val fileMonitor = new FileAlterationMonitor(1000)
     val observer = new FileAlterationObserver(directory)
     val listener = new FileAlterationListenerAdaptor {
       override def onFileCreate(file: File) {
-        println("~~In onFileCreate")
+        //println("~~In onFileCreate")
         try p.trySuccess(file.getName)
-        finally fileMonitor.stop()
+        finally fileMonitor.stop() // Why does this throw an exeption?
       }
     }
     observer.addListener(listener)
@@ -32,11 +29,11 @@ object PromisesAndCallbacks extends App {
 
   fileCreated(".") onComplete {
     case Success(filename) => println(s"Detected new file '$filename'")
-    case Failure(e) => println("WTF?" + e)
+    case Failure(e) => println("Error: " + e)
   }
   
   println("TCB")
-  Thread.sleep(3000)
+  Thread.sleep(15000)
   println("JVM leavin da haus")
 }
 

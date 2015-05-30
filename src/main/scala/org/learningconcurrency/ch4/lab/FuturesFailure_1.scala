@@ -15,5 +15,6 @@ object FuturesFailure_1 extends App {
        case t => println(s"exception occurred - $t")
     }
     
-    Thread.sleep(1000)
+    Thread.sleep(2000)
+    println("END")
 }

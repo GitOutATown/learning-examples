@@ -19,6 +19,7 @@ object FuturesCallbacks_2 extends App {
         lines
     }
     
+    // Invoke Future computation
     val urlSpec: Future[List[String]] = getUrlSpec()
     
     def find(lines: List[String], keyword: String): String = {
@@ -26,7 +27,8 @@ object FuturesCallbacks_2 extends App {
             case (line, n) if (line.contains(keyword)) => (n, line)
         } mkString("\n")
     }
-        
+    
+    // Callback with find for "telnet"
     urlSpec foreach { // Will not be called if the future fails.
         case lines => {
             val completedTime = System.currentTimeMillis
@@ -37,6 +39,7 @@ object FuturesCallbacks_2 extends App {
         }
     }
     
+    // Callback with find for "password"
     urlSpec foreach { // Will not be called if the future fails.
         case lines => {
             val completedTime = System.currentTimeMillis

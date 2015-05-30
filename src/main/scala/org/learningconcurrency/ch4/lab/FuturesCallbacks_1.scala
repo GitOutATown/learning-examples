@@ -15,11 +15,6 @@ object FuturesCallbacks_1 extends App {
     }
     
     val urlSpec: Future[List[String]] = getUrlSpec()
-    
-    def find(lines: List[String], keyword: String): String =
-        lines.zipWithIndex collect {
-            case (line, n) if line.contains(keyword) => (n, line)
-        } mkString("\n")
        
     urlSpec.onComplete {
         /* This pattern I'm using here is totally legit, but note that
@@ -42,9 +37,14 @@ object FuturesCallbacks_1 extends App {
         case Failure(e) => println(e) // extends Try[T]
     }
     
+    def find(lines: List[String], keyword: String): String =
+        lines.zipWithIndex collect {
+            case (line, n) if line.contains(keyword) => (n, line)
+        } mkString("\n")
+    
     val startTime = System.currentTimeMillis
     println("TCB")
-    Thread.sleep(1000)
+    Thread.sleep(2000)
     println("JVM leavin' da haus!")
 }
 

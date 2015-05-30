@@ -15,12 +15,17 @@ object Netiquette_combinators extends App {
     val urlSpec = Future { Source.fromURL(urlSpecUrl).mkString }
     
     // The non-elegant, hard to read, explicit calls to flatMap and map
+    /* flatMap creates a new future by applying a function to the successful 
+     * result of this future, and returns the result of the function as the 
+     * new future. If this future is completed with an exception then the new 
+     * future will also contain this exception.
+     */
     val answer1 = netiquette.flatMap { nettext =>
         urlSpec.map { urltext =>
             "Check this out: " + nettext + ".\n\nAnd check out:\n" + urltext
         } 
     }
-    answer1 foreach { case contents => println(contents) }
+    answer1 foreach { case contents => println("answer1 contents:\n" + contents) }
     
     /* More elegant, easy to read, implicit flatMap and map.
      * Note that in this and the previous example the Futures
@@ -29,9 +34,10 @@ object Netiquette_combinators extends App {
      * is a dependency.
      */
     val answer2 = for {
-        nettext <- netiquette
-        urltext <- urlSpec
+        nettext <- netiquette // flatMap
+        urltext <- urlSpec    // map
     } yield ("Check this out: " + nettext + ".\n\nAnd check out:\n" + urltext)
+    answer2 foreach { case contents => println("answer2 contents:\n" + contents) }
 
     /* This example shows a computational dependency where the second Future
      * cannot start its computation until the First one completes. i.e. no
@@ -41,9 +47,11 @@ object Netiquette_combinators extends App {
        nettext <- Future { Source.fromURL(netiquetteUrl).mkString }
        urltext <- Future { Source.fromURL(urlSpecUrl).mkString }
     } yield ("First, read this: " + nettext + ". Now, try this: " + urltext)
+    answer foreach { case contents => println("answer contents:\n" + contents) }
     
     println("TCB")
-    Thread.sleep(1000)
+    Thread.sleep(2000)
+    println("END")
 }
 
 

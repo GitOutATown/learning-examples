@@ -5,10 +5,15 @@ import ExecutionContext.Implicits.global
 
 object FuturesNonFatal_2 extends App {
     val g = Future { throw new IllegalArgumentException }
-    val f = Future { throw new InterruptedException }
+    val f = Future {
+        Thread.sleep(1000)
+        throw new InterruptedException 
+    }
     // InterruptedException trumps failed and goes straight to the console/top of the stack
     // i.e. Fatal errors are automatically forwarded to the execution context.
     g.failed foreach { case t => println(s"error - $t") } 
     f.failed foreach { case t => println(s"error - $t") }
     
+    Thread.sleep(1500)
+    println("END")
 }
