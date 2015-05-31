@@ -9,6 +9,7 @@ import scala.io.Source
 object CompositionConcatAndFlatten extends App {
 
     def fetchQuote(): Future[String] = Future {
+        println("~~fetchQuote TOP")
         blocking {
             val url = "http://www.iheartquotes.com/api/v1/random?show_permalink=false&show_source=false"
             Source.fromURL(url).getLines.mkString
@@ -27,13 +28,14 @@ object CompositionConcatAndFlatten extends App {
          * objects emitting separate quotes.
          * <<< 
          */
+        // The take(5).map is repeatedly calling fetchQuoteObervable
         Observable.interval(0.5.seconds).take(5).map { // outer map
             n => fetchQuoteObservable().map(txt => s"$n) $txt") // inner map
         }
     }
     
     // concat maintains event order of Observables sequence
-    println(s"Using concat")
+    println(s"==>Using concat")
     quotes.concat.subscribe(println(_))
 
     Thread.sleep(6000)
@@ -41,14 +43,14 @@ object CompositionConcatAndFlatten extends App {
     /* The remaining three examples, flatten, flatMap/map, and for-comprehension,
      * order events by their arrival in time (not by sequence order of Observables) */
     
-    println(s"Now using flatten")
+    println(s"==>Now using flatten")
     /* >>> Invoking the flatMap method is semantically equivalent
      *     to calling map followed by flatten. <<< */
     quotes.flatten.subscribe(println(_))
 
     Thread.sleep(6000)
 
-    println(s"Now using flatMap")
+    println(s"==>Now using flatMap")
     Observable.interval(0.5.seconds).take(5).flatMap({
         n => fetchQuoteObservable().map(txt => s"$n) $txt")
     }).subscribe(println(_))
@@ -63,5 +65,5 @@ object CompositionConcatAndFlatten extends App {
     qts.subscribe(println(_))
 
     Thread.sleep(6000)
-
+    println("END")
 }

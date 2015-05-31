@@ -5,15 +5,22 @@ import scala.concurrent.duration._
 import scala.io.Source
 import Observable._
 
-object CompositionScan extends App {
+object CompositionScan2 extends App {
 
     // Counts number (i.e. ratio) of retries to attempts
     /* Repeat: Returns an Observable that repeats the sequence of items 
      * emitted by the source Observable indefinitely.
      */
-    shortQuote.retry.repeat.take(100).scan(0) {
-        (n, quote) => if (quote == "Retrying...") n + 1 else n // accumulator function
-    } subscribe(n => println(s"$n / 100"))
+    val subscription = shortQuote.retry.repeat.take(100).scan((0,0)) {
+        // n is accumulator supplied by scan, quote is emitted by observable
+        (acc, quote) => // (retries, total count)
+            if (quote == "Retrying...") {
+                (acc._1 + 1, acc._2 + 1)
+            } 
+            else {
+                (acc._1, acc._2 + 1)
+            } // fed back to accumulator function
+    } subscribe(acc => println(acc._1 + " / " + acc._2))
 
     def randomQuote = Observable.apply[String] { obs =>
         val url = "http://www.iheartquotes.com/api/v1/random?" +
@@ -23,8 +30,10 @@ object CompositionScan extends App {
         Subscription()
     }
 
+    // retry catches this error
     def errorMessage = items("Retrying...") ++ error(new Exception)
   
+    // callback
     def shortQuote = for {
         txt     <- randomQuote
         message <- if (txt.length < 100) items(txt) else errorMessage

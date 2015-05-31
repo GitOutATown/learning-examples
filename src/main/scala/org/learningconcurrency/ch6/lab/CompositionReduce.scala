@@ -13,6 +13,7 @@ object CompositionReduce extends App {
 
     shortQuotesCollection.subscribe(println(_))
     
+    // TODO: What is retry doing here?
     def shortQuote = randomQuote.retry.take(5).filter(_ != "Retrying...")
     
     def randomQuote = Observable.apply[String] { obs =>
@@ -20,7 +21,6 @@ object CompositionReduce extends App {
             "show_permalink=false&show_source=false"
         obs.onNext(Source.fromURL(url).getLines.mkString)
         obs.onCompleted()
-        Subscription()
+        Subscription() // TODO: I can't see what this is doing... returning a subscription?
     }
-
 }
